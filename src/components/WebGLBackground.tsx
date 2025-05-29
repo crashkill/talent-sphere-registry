@@ -1,18 +1,18 @@
 
 import React, { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Points, PointMaterial, Sphere } from '@react-three/drei';
+import { Points, PointMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 
 const ParticleField = () => {
   const ref = useRef<THREE.Points>(null);
   
   const particles = React.useMemo(() => {
-    const temp = new Float32Array(3000 * 3);
-    for (let i = 0; i < 3000; i++) {
-      temp[i * 3] = (Math.random() - 0.5) * 20;
-      temp[i * 3 + 1] = (Math.random() - 0.5) * 20;
-      temp[i * 3 + 2] = (Math.random() - 0.5) * 20;
+    const temp = new Float32Array(1500 * 3); // Reduced particle count
+    for (let i = 0; i < 1500; i++) {
+      temp[i * 3] = (Math.random() - 0.5) * 15;
+      temp[i * 3 + 1] = (Math.random() - 0.5) * 15;
+      temp[i * 3 + 2] = (Math.random() - 0.5) * 15;
     }
     return temp;
   }, []);
@@ -30,11 +30,10 @@ const ParticleField = () => {
       <PointMaterial
         transparent
         color="#4338ca"
-        size={0.005}
+        size={0.008}
         sizeAttenuation={true}
         depthWrite={false}
         opacity={0.8}
-        vertexColors={false}
       />
     </Points>
   );
@@ -55,16 +54,15 @@ const FloatingOrb = ({ position }: { position: [number, number, number] }) => {
   });
 
   return (
-    <mesh ref={ref}>
-      <Sphere args={[0.3, 32, 32]}>
-        <meshPhongMaterial 
-          color="#8b5cf6" 
-          transparent 
-          opacity={0.15}
-          emissive="#4c1d95"
-          emissiveIntensity={0.2}
-        />
-      </Sphere>
+    <mesh ref={ref} position={position}>
+      <sphereGeometry args={[0.3, 16, 16]} />
+      <meshPhongMaterial 
+        color="#8b5cf6" 
+        transparent 
+        opacity={0.15}
+        emissive="#4c1d95"
+        emissiveIntensity={0.2}
+      />
     </mesh>
   );
 };
@@ -72,7 +70,13 @@ const FloatingOrb = ({ position }: { position: [number, number, number] }) => {
 const WebGLBackground = () => {
   return (
     <div className="fixed inset-0 z-0">
-      <Canvas camera={{ position: [0, 0, 8], fov: 60 }}>
+      <Canvas 
+        camera={{ position: [0, 0, 8], fov: 60 }}
+        gl={{ antialias: true, alpha: true }}
+        onCreated={({ gl }) => {
+          gl.setClearColor('#000000', 0);
+        }}
+      >
         <ambientLight intensity={0.3} />
         <pointLight position={[10, 10, 10]} intensity={0.8} color="#8b5cf6" />
         <pointLight position={[-10, -10, -10]} intensity={0.5} color="#3b82f6" />
