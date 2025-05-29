@@ -5,7 +5,6 @@ import Dashboard from '../components/Dashboard';
 import ManualForm from '../components/ManualForm';
 import ExcelImport from '../components/ExcelImport';
 import WebGLBackground from '../components/WebGLBackground';
-import MouseTrail from '../components/MouseTrail';
 import { Professional } from '../types/Professional';
 
 const Index = () => {
@@ -37,7 +36,6 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950 relative overflow-hidden">
       <WebGLBackground />
-      <MouseTrail />
       
       {/* Glassmorphism overlay */}
       <div className="fixed inset-0 bg-gradient-to-br from-purple-900/10 via-transparent to-blue-900/10 backdrop-blur-[0.5px] z-5"></div>
