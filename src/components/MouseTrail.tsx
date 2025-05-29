@@ -30,10 +30,10 @@ const MouseTrail = () => {
         timestamp: Date.now()
       });
 
-      // Keep only recent points (last 500ms)
+      // Keep more points for smoother trail (last 800ms)
       const now = Date.now();
       trailPoints.current = trailPoints.current.filter(
-        point => now - point.timestamp < 500
+        point => now - point.timestamp < 800
       );
     };
 
@@ -47,35 +47,51 @@ const MouseTrail = () => {
 
       const now = Date.now();
       
-      // Create gradient trail
+      // Draw smoother trail with bezier curves
+      ctx.beginPath();
+      
       for (let i = 1; i < trailPoints.current.length; i++) {
         const current = trailPoints.current[i];
         const previous = trailPoints.current[i - 1];
         
         const age = now - current.timestamp;
-        const opacity = Math.max(0, 1 - age / 500);
-        const size = Math.max(1, 8 * opacity);
+        const opacity = Math.max(0, 1 - age / 800);
+        const size = Math.max(0.5, 12 * opacity);
         
-        ctx.beginPath();
-        ctx.moveTo(previous.x, previous.y);
-        ctx.lineTo(current.x, current.y);
-        
-        // Create gradient for each segment
+        // Create smooth gradient for each segment
         const gradient = ctx.createLinearGradient(
           previous.x, previous.y, current.x, current.y
         );
-        gradient.addColorStop(0, `rgba(139, 92, 246, ${opacity * 0.3})`);
-        gradient.addColorStop(1, `rgba(59, 130, 246, ${opacity * 0.6})`);
+        
+        // More vibrant colors with better blending
+        gradient.addColorStop(0, `rgba(147, 51, 234, ${opacity * 0.4})`); // Purple
+        gradient.addColorStop(0.5, `rgba(79, 70, 229, ${opacity * 0.6})`); // Indigo
+        gradient.addColorStop(1, `rgba(59, 130, 246, ${opacity * 0.5})`); // Blue
         
         ctx.strokeStyle = gradient;
         ctx.lineWidth = size;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
-        ctx.stroke();
         
         // Add glow effect
-        ctx.shadowColor = '#8b5cf6';
-        ctx.shadowBlur = size * 2;
+        ctx.shadowColor = 'rgba(147, 51, 234, 0.6)';
+        ctx.shadowBlur = size * 1.5;
+        
+        // Draw smooth line
+        if (i === 1) {
+          ctx.moveTo(previous.x, previous.y);
+        }
+        
+        // Use quadratic curves for smoother lines
+        if (i < trailPoints.current.length - 1) {
+          const next = trailPoints.current[i + 1];
+          const cpx = (current.x + next.x) / 2;
+          const cpy = (current.y + next.y) / 2;
+          ctx.quadraticCurveTo(current.x, current.y, cpx, cpy);
+        } else {
+          ctx.lineTo(current.x, current.y);
+        }
+        
         ctx.stroke();
         ctx.shadowBlur = 0;
       }
@@ -102,7 +118,10 @@ const MouseTrail = () => {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-50"
-      style={{ mixBlendMode: 'screen' }}
+      style={{ 
+        mixBlendMode: 'screen',
+        opacity: 0.9
+      }}
     />
   );
 };
