@@ -1,27 +1,27 @@
 
 import React, { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Points, PointMaterial } from '@react-three/drei';
+import { Points, PointMaterial, Sphere } from '@react-three/drei';
 import * as THREE from 'three';
 
 const ParticleField = () => {
   const ref = useRef<THREE.Points>(null);
   
-  // Generate random particle positions
   const particles = React.useMemo(() => {
-    const temp = new Float32Array(2000 * 3);
-    for (let i = 0; i < 2000; i++) {
-      temp[i * 3] = (Math.random() - 0.5) * 10;
-      temp[i * 3 + 1] = (Math.random() - 0.5) * 10;
-      temp[i * 3 + 2] = (Math.random() - 0.5) * 10;
+    const temp = new Float32Array(3000 * 3);
+    for (let i = 0; i < 3000; i++) {
+      temp[i * 3] = (Math.random() - 0.5) * 20;
+      temp[i * 3 + 1] = (Math.random() - 0.5) * 20;
+      temp[i * 3 + 2] = (Math.random() - 0.5) * 20;
     }
     return temp;
   }, []);
 
   useFrame((state) => {
     if (ref.current) {
-      ref.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.1) * 0.1;
-      ref.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.15) * 0.1;
+      ref.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.05) * 0.2;
+      ref.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.08) * 0.2;
+      ref.current.rotation.z = Math.sin(state.clock.elapsedTime * 0.03) * 0.1;
     }
   });
 
@@ -29,31 +29,42 @@ const ParticleField = () => {
     <Points ref={ref} positions={particles} stride={3} frustumCulled={false}>
       <PointMaterial
         transparent
-        color="#8b5cf6"
-        size={0.01}
+        color="#4338ca"
+        size={0.005}
         sizeAttenuation={true}
         depthWrite={false}
-        opacity={0.6}
+        opacity={0.8}
+        vertexColors={false}
       />
     </Points>
   );
 };
 
-const FloatingCube = ({ position }: { position: [number, number, number] }) => {
+const FloatingOrb = ({ position }: { position: [number, number, number] }) => {
   const ref = useRef<THREE.Mesh>(null);
   
   useFrame((state) => {
     if (ref.current) {
-      ref.current.rotation.x += 0.005;
-      ref.current.rotation.y += 0.01;
-      ref.current.position.y = position[1] + Math.sin(state.clock.elapsedTime + position[0]) * 0.2;
+      ref.current.position.x = position[0] + Math.sin(state.clock.elapsedTime * 0.5 + position[0]) * 0.5;
+      ref.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.3 + position[1]) * 0.3;
+      ref.current.position.z = position[2] + Math.sin(state.clock.elapsedTime * 0.4 + position[2]) * 0.2;
+      
+      ref.current.rotation.x += 0.002;
+      ref.current.rotation.y += 0.003;
     }
   });
 
   return (
-    <mesh ref={ref} position={position}>
-      <boxGeometry args={[0.5, 0.5, 0.5]} />
-      <meshStandardMaterial color="#3b82f6" transparent opacity={0.3} />
+    <mesh ref={ref}>
+      <Sphere args={[0.3, 32, 32]}>
+        <meshPhongMaterial 
+          color="#8b5cf6" 
+          transparent 
+          opacity={0.15}
+          emissive="#4c1d95"
+          emissiveIntensity={0.2}
+        />
+      </Sphere>
     </mesh>
   );
 };
@@ -61,16 +72,18 @@ const FloatingCube = ({ position }: { position: [number, number, number] }) => {
 const WebGLBackground = () => {
   return (
     <div className="fixed inset-0 z-0">
-      <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
-        <ambientLight intensity={0.5} />
-        <pointLight position={[10, 10, 10]} />
+      <Canvas camera={{ position: [0, 0, 8], fov: 60 }}>
+        <ambientLight intensity={0.3} />
+        <pointLight position={[10, 10, 10]} intensity={0.8} color="#8b5cf6" />
+        <pointLight position={[-10, -10, -10]} intensity={0.5} color="#3b82f6" />
         
         <ParticleField />
         
-        <FloatingCube position={[-3, 2, -2]} />
-        <FloatingCube position={[3, -1, -3]} />
-        <FloatingCube position={[0, 3, -4]} />
-        <FloatingCube position={[-2, -2, -1]} />
+        <FloatingOrb position={[-4, 3, -3]} />
+        <FloatingOrb position={[4, -2, -4]} />
+        <FloatingOrb position={[0, 4, -5]} />
+        <FloatingOrb position={[-3, -3, -2]} />
+        <FloatingOrb position={[5, 1, -3]} />
       </Canvas>
     </div>
   );
