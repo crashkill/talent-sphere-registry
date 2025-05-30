@@ -1,15 +1,32 @@
 
 export interface Professional {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  area: string;
-  mainSkill: string;
-  otherSkills: Array<{
-    name: string;
-    level: 'Júnior' | 'Pleno' | 'Sênior';
-  }>;
+  id: string; // UUID do Supabase
+  email: string | null;
+  hora_ultima_modificacao: string | null; // ISO date string
+  nome_completo: string | null;
+  regime: string | null;
+  local_alocacao: string | null;
+  proficiencia_cargo: string | null;
+  java: string | null;
+  javascript: string | null;
+  python: string | null;
+  typescript: string | null;
+  php: string | null;
+  dotnet: string | null;
+  react: string | null;
+  angular: string | null;
+  ionic: string | null;
+  flutter: string | null;
+  mysql: string | null;
+  postgres: string | null;
+  oracle_db: string | null;
+  sql_server: string | null;
+  mongodb: string | null;
+  aws: string | null;
+  azure: string | null;
+  gcp: string | null;
+  outras_tecnologias: string | null;
+  created_at: string | null; // ISO date string
 }
 
 export const AREAS = [
