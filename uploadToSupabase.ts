@@ -3,7 +3,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import * as fs from 'fs';
 
 // Configurações
-const EXCEL_FILE_PATH = '/Users/fabriciocardosodelima/Desktop/talent-sphere-registry/Cadastro Colaboradores - FSW São Paulo(1-85).xlsx';
+const EXCEL_FILE_PATH = '/Users/fabriciocardosodelima/Desktop/gestao-profissionais/Cadastro Colaboradores - FSW São Paulo(1-85).xlsx';
 const EXCEL_SHEET_NAME = 'Respostas';
 
 const SUPABASE_URL = 'https://pwksgdjjkryqryqrvyja.supabase.co';

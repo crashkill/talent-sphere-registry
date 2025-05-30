@@ -1,7 +1,7 @@
 import * as XLSX from 'xlsx';
 import * as fs from 'fs'; // Usaremos para verificar se o arquivo existe
 
-const filePath = '/Users/fabriciocardosodelima/Desktop/talent-sphere-registry/Cadastro Colaboradores - FSW São Paulo(1-85).xlsx';
+const filePath = '/Users/fabriciocardosodelima/Desktop/gestao-profissionais/Cadastro Colaboradores - FSW São Paulo(1-85).xlsx';
 
 function analyzeExcelFile(path: string) {
   try {

@@ -6,23 +6,30 @@ on:
       - main
   workflow_dispatch:
 
+# Configura as permissões do job
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Permite que o job atualize o job de deploy
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
 jobs:
   build-and-deploy:
+    name: Build and Deploy
     runs-on: ubuntu-latest
     
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
 
       - name: Install dependencies
@@ -32,10 +39,12 @@ jobs:
 
       - name: Build application
         run: |
+          echo "Building application..."
           npm run build
 
       - name: Verify build output
         run: |
+          echo "Verifying build output..."
           if [ ! -f dist/index.html ]; then
             echo "❌ Error: index.html not found in dist/"
             ls -la dist/ || true
@@ -44,10 +53,10 @@ jobs:
           echo "✅ Build verified successfully"
 
       - name: Setup Pages
-        uses: actions/configure-pages@v3
+        uses: actions/configure-pages@v4
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v2
         with:
           path: './dist'
 
@@ -59,11 +68,7 @@ jobs:
     needs: build-and-deploy
     runs-on: ubuntu-latest
     
-    permissions:
-      pages: write
-      id-token: write
-
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v3

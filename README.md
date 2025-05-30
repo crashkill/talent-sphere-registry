@@ -1,6 +1,6 @@
 # Talent Sphere Registry
 
-[![Deploy to GitHub Pages](https://github.com/crashkill/talent-sphere-registry/actions/workflows/gh-pages.yml/badge.svg)](https://github.com/crashkill/talent-sphere-registry/actions/workflows/gh-pages.yml)
+[![Deploy to GitHub Pages](https://github.com/crashkill/gestao-profissionais/actions/workflows/gh-pages.yml/badge.svg)](https://github.com/crashkill/gestao-profissionais/actions/workflows/gh-pages.yml)
 
 🔹 **Status do Deploy**: Configurando GitHub Pages...
 
@@ -20,7 +20,7 @@ O Gestão Profissional HITSS é uma aplicação web moderna para gestão de prof
 
 O deploy para o GitHub Pages é feito automaticamente a cada push para a branch `main`. O site estará disponível em:
 
-https://crashkill.github.io/talent-sphere-registry/
+https://crashkill.github.io/gestao-profissionais/
 
 ### Fluxo de Deploy
 
