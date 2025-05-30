@@ -21,7 +21,9 @@ jobs:
         run: npm install
 
       - name: Update browserslist-db
-        run: npx update-browserslist-db@latest
+        run: |
+          npm install update-browserslist-db@latest
+          npx update-browserslist-db
 
       - name: Build
         run: npm run build
