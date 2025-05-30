@@ -1,54 +1,68 @@
-# Welcome to your Lovable project
+# Bem-vindo ao seu projeto Lovable
 
-## Project info
+## Informações do Projeto
 
 **URL**: https://lovable.dev/projects/9b7fa240-213d-4bd6-b987-910516f6564a
 
-## How can I edit this code?
+## Como posso editar este código?
 
-There are several ways of editing your application.
+Existem várias maneiras de editar sua aplicação.
 
-**Use Lovable**
+**Use o Lovable**
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/9b7fa240-213d-4bd6-b987-910516f6564a) and start prompting.
+Simplesmente visite o [Projeto Lovable](https://lovable.dev/projects/9b7fa240-213d-4bd6-b987-910516f6564a) e comece a interagir.
 
-Changes made via Lovable will be committed automatically to this repo.
+As alterações feitas via Lovable serão commitadas automaticamente neste repositório.
 
-**Use your preferred IDE**
+**Use sua IDE preferida**
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Se você deseja trabalhar localmente usando sua própria IDE, pode clonar este repositório e enviar as alterações (push). As alterações enviadas também serão refletidas no Lovable.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+O único requisito é ter Node.js e npm instalados - [instale com nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
-Follow these steps:
+Siga estes passos:
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Passo 1: Clone o repositório usando a URL Git do projeto.
+git clone <SUA_URL_GIT>
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Passo 2: Navegue até o diretório do projeto.
+cd <NOME_DO_SEU_PROJETO>
 
-# Step 3: Install the necessary dependencies.
+# Passo 3: Instale as dependências necessárias.
 npm i
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Passo 4: Inicie o servidor de desenvolvimento com recarregamento automático e visualização instantânea.
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+**Edite um arquivo diretamente no GitHub**
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- Navegue até o(s) arquivo(s) desejado(s).
+- Clique no botão "Editar" (ícone de lápis) no canto superior direito da visualização do arquivo.
+- Faça suas alterações e confirme (commit) as alterações.
 
-**Use GitHub Codespaces**
+**Use o GitHub Codespaces**
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- Navegue até a página principal do seu repositório.
+- Clique no botão "Code" (botão verde) próximo ao canto superior direito.
+- Selecione a aba "Codespaces".
+- Clique em "New codespace" para iniciar um novo ambiente Codespace.
+- Edite os arquivos diretamente no Codespace e confirme (commit) e envie (push) suas alterações quando terminar.
+
+## Regras de Processamento de Dados
+
+Ao processar o arquivo `Cadastro Colaboradores - FSW São Paulo(1-85).xlsx`, especificamente a planilha `Respostas`, as seguintes colunas devem ser **ignoradas**:
+- `ID`
+- `Hora de Início`
+- `Hora de Conclusão`
+- `Nome` (a coluna simples `Nome`, não `Nome Completo`)
+
+Todas as outras colunas desta planilha são relevantes para a aplicação e devem ser consideradas para armazenamento no Supabase.
+
+## Integrações e Ferramentas
+
+Este projeto integra-se com o Supabase para gerenciamento de banco de dados. As chaves de acesso e outras configurações do Supabase são obtidas e gerenciadas através do Supabase MCP (Model Context Protocol), garantindo uma interação segura e eficiente com os serviços Supabase.
 
 ## What technologies are used for this project?
 
