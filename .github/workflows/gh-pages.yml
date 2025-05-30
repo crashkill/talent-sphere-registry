@@ -4,14 +4,18 @@ on:
   push:
     branches:
       - main
-    workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
   deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
     runs-on: ubuntu-latest
     
     permissions:
-      contents: write
+      contents: read
       pages: write
       id-token: write
 
@@ -59,8 +63,17 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
+        timeout-minutes: 5
 
       - name: Show deployment status
+        if: success()
         run: |
-          echo "Deployment status: ${{ steps.deployment.outcome }}"
-          echo "Deployment URL: ${{ steps.deployment.outputs.page_url }}"
+          echo "🚀 Deployment successful!"
+          echo "🌐 Your site is now live at: ${{ steps.deployment.outputs.page_url }}"
+
+      - name: Show deployment failure
+        if: failure()
+        run: |
+          echo "❌ Deployment failed!"
+          echo "Check the logs above for more details."
+          exit 1
