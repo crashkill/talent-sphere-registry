@@ -62,6 +62,14 @@ VITE_SUPABASE_ANON_KEY=sua_chave_anonima
 - Validação de dados
 - Interface responsiva
 
+### ProfessionalUpdate
+
+- Edição detalhada do perfil do profissional
+- Atualização de nível de proficiência
+- Gestão de habilidades e certificações
+- Histórico de alterações
+- Sistema de aprovação para mudanças significativas
+
 ## API e Integrações
 
 ### Supabase
