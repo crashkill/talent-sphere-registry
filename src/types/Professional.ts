@@ -27,6 +27,8 @@ export interface Professional {
   gcp: string | null;
   outras_tecnologias: string | null;
   created_at: string | null; // ISO date string
+  disponivel_compartilhamento: boolean | null;
+  percentual_compartilhamento: '100' | '75' | '50' | '25' | null;
 }
 
 export const AREAS = [

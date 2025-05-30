@@ -13,30 +13,18 @@ const ManualForm: React.FC<ManualFormProps> = ({ onSubmit, onBack }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    phone: '',
     area: '',
     mainSkill: '',
-    otherSkills: [] as Array<{ name: string; level: 'Júnior' | 'Pleno' | 'Sênior' }>
+    otherSkills: [] as Array<{ name: string; level: 'Júnior' | 'Pleno' | 'Sênior' }>,
+    disponivel_compartilhamento: false,
+    percentual_compartilhamento: null as '100' | '75' | '50' | '25' | null
   });
 
   const [currentSkill, setCurrentSkill] = useState('');
   const [currentLevel, setCurrentLevel] = useState<'Júnior' | 'Pleno' | 'Sênior'>('Júnior');
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const formatPhone = (value: string) => {
-    const numbers = value.replace(/\D/g, '');
-    
-    if (numbers.length <= 11) {
-      const formatted = numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-      return formatted;
-    }
-    return value;
-  };
 
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatPhone(e.target.value);
-    setFormData({ ...formData, phone: formatted });
-  };
 
   const addSkill = () => {
     if (currentSkill && !formData.otherSkills.find(s => s.name === currentSkill)) {
@@ -64,11 +52,39 @@ const ManualForm: React.FC<ManualFormProps> = ({ onSubmit, onBack }) => {
       return;
     }
 
-    onSubmit({
+    const professional: Professional = {
       id: '',
-      ...formData,
-      phone: `+55 ${formData.phone}`
-    });
+      email: formData.email,
+      nome_completo: formData.name,
+      hora_ultima_modificacao: new Date().toISOString(),
+      regime: null,
+      local_alocacao: null,
+      proficiencia_cargo: null,
+      java: null,
+      javascript: null,
+      python: null,
+      typescript: null,
+      php: null,
+      dotnet: null,
+      react: null,
+      angular: null,
+      ionic: null,
+      flutter: null,
+      mysql: null,
+      postgres: null,
+      oracle_db: null,
+      sql_server: null,
+      mongodb: null,
+      aws: null,
+      azure: null,
+      gcp: null,
+      outras_tecnologias: null,
+      created_at: new Date().toISOString(),
+      disponivel_compartilhamento: formData.disponivel_compartilhamento,
+      percentual_compartilhamento: formData.disponivel_compartilhamento ? formData.percentual_compartilhamento : null
+    };
+
+    onSubmit(professional);
 
     setShowSuccess(true);
     setTimeout(() => {
@@ -148,24 +164,40 @@ const ManualForm: React.FC<ManualFormProps> = ({ onSubmit, onBack }) => {
             />
           </div>
 
-          {/* Telefone */}
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              Telefone
-            </label>
-            <div className="flex">
-              <span className="flex items-center px-3 bg-white/5 border border-white/20 border-r-0 rounded-l-lg text-slate-300">
-                +55
-              </span>
+          {/* Compartilhamento */}
+          <div className="space-y-4">
+            <div className="flex items-center space-x-2">
               <input
-                type="text"
-                value={formData.phone}
-                onChange={handlePhoneChange}
-                className="flex-1 p-3 bg-white/5 border border-white/20 rounded-r-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="(11) 99999-9999"
-                maxLength={15}
+                type="checkbox"
+                id="disponivel_compartilhamento"
+                checked={formData.disponivel_compartilhamento}
+                onChange={(e) => setFormData({ ...formData, disponivel_compartilhamento: e.target.checked })}
+                className="w-4 h-4 rounded border-white/20 bg-white/5 text-blue-500 focus:ring-blue-500 focus:ring-offset-0"
               />
+              <label htmlFor="disponivel_compartilhamento" className="text-sm font-medium text-slate-300">
+                Disponível para Compartilhamento
+              </label>
             </div>
+
+            {formData.disponivel_compartilhamento && (
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Percentual de Compartilhamento
+                </label>
+                <select
+                  value={formData.percentual_compartilhamento || ''}
+                  onChange={(e) => setFormData({ ...formData, percentual_compartilhamento: e.target.value as '100' | '75' | '50' | '25' })}
+                  className="w-full p-3 bg-white/5 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required={formData.disponivel_compartilhamento}
+                >
+                  <option value="" className="bg-slate-800">Selecione o percentual</option>
+                  <option value="100" className="bg-slate-800">100%</option>
+                  <option value="75" className="bg-slate-800">75%</option>
+                  <option value="50" className="bg-slate-800">50%</option>
+                  <option value="25" className="bg-slate-800">25%</option>
+                </select>
+              </div>
+            )}
           </div>
 
           {/* Área */}

@@ -7,8 +7,8 @@ import { Professional } from '../types/Professional';
 import { createClient, SupabaseClient } from '@supabase/supabase-js'; // Importar Supabase
 
 // Configurações do Supabase (repetido aqui para o exemplo, idealmente seria centralizado)
-const SUPABASE_URL = 'https://pwksgdjjkryqryqrvyja.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3a3NnZGpqa3J5cXJ5cXJ2eWphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1NjAwNDgsImV4cCI6MjA2NDEzNjA0OH0.CbqU-Gx-QglerhxQzDjK6KFAi4CRLUl90LeKvDEKtbc';
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabase: SupabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 interface DashboardProps {
@@ -44,6 +44,23 @@ const COLORS = [
   '#ef4444', '#ec4899', '#84cc16', '#6366f1', '#f97316',
   '#d946ef', '#22d3ee', '#a3e635', '#f472b6', '#fbbf24' // Adicionando mais cores
 ];
+
+// Função para formatar nomes próprios (primeira letra maiúscula, resto minúscula)
+const formatName = (name: string) => {
+  return name
+    .toLowerCase()
+    .split(' ')
+    .map(word => {
+      // Ignora palavras vazias ou apenas com espaços
+      if (!word) return word;
+      // Lista de preposições e artigos que devem permanecer em minúsculo
+      const minusculeWords = ['de', 'da', 'do', 'das', 'dos', 'e'];
+      if (minusculeWords.includes(word)) return word;
+      // Capitaliza a primeira letra
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join(' ');
+};
 
 const Dashboard: React.FC<DashboardProps> = ({ professionals, onNavigate }) => {
   const [skillProficiencyData, setSkillProficiencyData] = useState<SkillProficiencyEntry[]>([]);
@@ -269,7 +286,7 @@ const Dashboard: React.FC<DashboardProps> = ({ professionals, onNavigate }) => {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2 }}
-        className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20"
+        className="bg-slate-800/40 backdrop-blur-md rounded-2xl p-8 border border-slate-700/50"
       >
         <h2 className="text-2xl font-bold text-white mb-6 text-center">
           {selectedSkill ? `Distribuição de Proficiência para ${selectedSkill}` : 'Visão Geral de Skills por Profissionais'}
@@ -289,7 +306,7 @@ const Dashboard: React.FC<DashboardProps> = ({ professionals, onNavigate }) => {
           <div className="h-96">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={mainSkillsChartData} layout="vertical" margin={{ top: 5, right: 30, left: 50, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.3} />
+                <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.1} stroke="#94a3b8" />
                 <XAxis type="number" stroke="#94a3b8" />
                 <YAxis type="category" dataKey="name" stroke="#94a3b8" width={100} interval={0} />
                 <Tooltip 
@@ -327,17 +344,23 @@ const Dashboard: React.FC<DashboardProps> = ({ professionals, onNavigate }) => {
                 Distribuição de Proficiência para {selectedSkill}
               </h3>
               <ResponsiveContainer width="100%" height="85%">
-                <BarChart data={drilldownChartData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
-                  <XAxis dataKey="name" tick={{ fill: '#cbd5e1' }} />
-                  <YAxis allowDecimals={false} tick={{ fill: '#cbd5e1' }} />
+                <BarChart data={drilldownChartData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }} barGap={0}>
+                  <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.1} stroke="#94a3b8" />
+                  <XAxis dataKey="name" tick={{ fill: '#e2e8f0' }} axisLine={{ stroke: '#475569' }} />
+                  <YAxis allowDecimals={false} tick={{ fill: '#e2e8f0' }} axisLine={{ stroke: '#475569' }} />
                   <Tooltip 
-                    contentStyle={{ backgroundColor: 'rgba(30, 41, 59, 0.8)', borderColor: 'rgba(100, 116, 139, 0.5)', borderRadius: '0.5rem' }} 
-                    labelStyle={{ color: '#e2e8f0', fontWeight: 'bold' }} 
-                    itemStyle={{ color: '#94a3b8' }}
+                    contentStyle={{ 
+                      backgroundColor: 'rgba(15, 23, 42, 0.9)', 
+                      borderColor: 'rgba(51, 65, 85, 0.5)', 
+                      borderRadius: '0.5rem',
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                    }} 
+                    labelStyle={{ color: '#f8fafc', fontWeight: 'bold', marginBottom: '4px' }} 
+                    itemStyle={{ color: '#cbd5e1', padding: '4px 0' }}
+                    cursor={false}
                   />
                   <Legend wrapperStyle={{ color: '#fff', paddingTop: '10px' }} />
-                  <Bar dataKey="count" name="Profissionais" radius={[5, 5, 0, 0]} barSize={30}>
+                  <Bar dataKey="count" name="Profissionais" radius={[4, 4, 0, 0]} barSize={40} fill="#3b82f6">
                     {drilldownChartData.map((entry, index) => (
                       <Cell 
                         key={`cell-${index}`} 
@@ -393,7 +416,7 @@ const Dashboard: React.FC<DashboardProps> = ({ professionals, onNavigate }) => {
                 <ul className="space-y-3">
                   {professionalsList.map((prof, index) => (
                     <li key={index} className="p-3 bg-slate-700/50 rounded-md shadow">
-                      <p className="font-medium text-sky-300">{prof.nome_completo}</p>
+                      <p className="font-medium text-sky-300">{formatName(prof.nome_completo || '')}</p>
                       <p className="text-sm text-slate-400">{prof.email}</p>
                     </li>
                   ))}

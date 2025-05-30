@@ -1,87 +1,97 @@
-# Bem-vindo ao seu projeto Lovable
+# Gestão Profissional HITSS
 
-## Informações do Projeto
+## Descrição
 
-**URL**: https://lovable.dev/projects/9b7fa240-213d-4bd6-b987-910516f6564a
+O Gestão Profissional HITSS é uma aplicação web moderna para gestão de profissionais de TI. A ferramenta permite:
+- Importação de dados via Excel ou formulário manual
+- Visualização de métricas e estatísticas
+- Gestão de perfis profissionais
+- Integração com Supabase para persistência de dados
 
-## Como posso editar este código?
+## Instalação e Configuração
 
-Existem várias maneiras de editar sua aplicação.
+### Pré-requisitos
 
-**Use o Lovable**
+- Node.js >= 18.x
+- npm ou yarn
+- TypeScript
 
-Simplesmente visite o [Projeto Lovable](https://lovable.dev/projects/9b7fa240-213d-4bd6-b987-910516f6564a) e comece a interagir.
+### Instalação
 
-As alterações feitas via Lovable serão commitadas automaticamente neste repositório.
+```bash
+# Clonar o repositório
+git clone https://github.com/seu-usuario/gestao-profissional-hitss.git
 
-**Use sua IDE preferida**
+cd gestao-profissional-hitss
 
-Se você deseja trabalhar localmente usando sua própria IDE, pode clonar este repositório e enviar as alterações (push). As alterações enviadas também serão refletidas no Lovable.
+# Instalar dependências
+npm install
 
-O único requisito é ter Node.js e npm instalados - [instale com nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+# Copiar arquivo de configuração
+cp .env.example .env
 
-Siga estes passos:
+# Editar variáveis de ambiente no .env
+# VITE_SUPABASE_URL=seu_projeto.supabase.co
+# VITE_SUPABASE_ANON_KEY=sua_chave_anonima
 
-```sh
-# Passo 1: Clone o repositório usando a URL Git do projeto.
-git clone <SUA_URL_GIT>
-
-# Passo 2: Navegue até o diretório do projeto.
-cd <NOME_DO_SEU_PROJETO>
-
-# Passo 3: Instale as dependências necessárias.
-npm i
-
-# Passo 4: Inicie o servidor de desenvolvimento com recarregamento automático e visualização instantânea.
+# Iniciar servidor de desenvolvimento
 npm run dev
 ```
 
-**Edite um arquivo diretamente no GitHub**
+## Estrutura do Projeto
 
-- Navegue até o(s) arquivo(s) desejado(s).
-- Clique no botão "Editar" (ícone de lápis) no canto superior direito da visualização do arquivo.
-- Faça suas alterações e confirme (commit) as alterações.
+```
+src/
+├── components/        # Componentes React reutilizáveis
+├── hooks/            # Custom hooks
+├── pages/            # Páginas da aplicação
+├── types/            # Tipos TypeScript
+├── services/         # Serviços e integrações
+└── utils/           # Funções utilitárias
+```
 
-**Use o GitHub Codespaces**
+## Funcionalidades Principais
 
-- Navegue até a página principal do seu repositório.
-- Clique no botão "Code" (botão verde) próximo ao canto superior direito.
-- Selecione a aba "Codespaces".
-- Clique em "New codespace" para iniciar um novo ambiente Codespace.
-- Edite os arquivos diretamente no Codespace e confirme (commit) e envie (push) suas alterações quando terminar.
+### Dashboard
 
-## Regras de Processamento de Dados
+- Visualização de métricas e gráficos
+- Análise de skills e proficiência
+- Filtros e agrupamentos
 
-Ao processar o arquivo `Cadastro Colaboradores - FSW São Paulo(1-85).xlsx`, especificamente a planilha `Respostas`, as seguintes colunas devem ser **ignoradas**:
-- `ID`
-- `Hora de Início`
-- `Hora de Conclusão`
-- `Nome` (a coluna simples `Nome`, não `Nome Completo`)
+### Excel Import
 
-Todas as outras colunas desta planilha são relevantes para a aplicação e devem ser consideradas para armazenamento no Supabase.
+- Importação de dados via arquivo Excel
+- Validação de formato
+- Template de importação
+- Processamento em lote
 
-## Integrações e Ferramentas
+### Manual Form
 
-Este projeto integra-se com o Supabase para gerenciamento de banco de dados. As chaves de acesso e outras configurações do Supabase são obtidas e gerenciadas através do Supabase MCP (Model Context Protocol), garantindo uma interação segura e eficiente com os serviços Supabase.
+- Cadastro manual de profissionais
+- Validação de dados
+- Interface responsiva
 
-## What technologies are used for this project?
+## Tecnologias Utilizadas
 
-This project is built with:
+- **Frontend:** React 18, TypeScript, Vite
+- **UI:** Tailwind CSS, Shadcn UI
+- **State Management:** React Context
+- **Formulários:** React Hook Form
+- **Integração:** Supabase
+- **Animações:** Framer Motion
+- **Gráficos:** Recharts
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Contribuição
 
-## How can I deploy this project?
+1. Clone o repositório
+2. Crie uma branch para sua feature
+3. Faça commit das mudanças
+4. Abra um Pull Request
 
-Simply open [Lovable](https://lovable.dev/projects/9b7fa240-213d-4bd6-b987-910516f6564a) and click on Share -> Publish.
+## Documentação Técnica
 
-## Can I connect a custom domain to my Lovable project?
+Para mais detalhes sobre a implementação e arquitetura do projeto, consulte o arquivo [DOCS.md](DOCS.md).
 
-Yes, you can!
+## Licença
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+MIT License

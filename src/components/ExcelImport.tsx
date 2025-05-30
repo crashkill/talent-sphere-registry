@@ -1,7 +1,7 @@
 
 import React, { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Upload, FileSpreadsheet, Check, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Upload, FileSpreadsheet, Check, AlertCircle, Download } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { Professional } from '../types/Professional';
 
@@ -60,7 +60,7 @@ const ExcelImport: React.FC<ExcelImportProps> = ({ onImport, onBack }) => {
         }
 
         // Validate required columns
-        const requiredColumns = ['Nome', 'Email', 'Telefone', 'Area', 'Skill Principal'];
+        const requiredColumns = ['Nome', 'Email', 'Area', 'Skill Principal', 'Disponivel para Compartilhamento', 'Percentual de Compartilhamento'];
         const firstRow = jsonData[0] as any;
         const missingColumns = requiredColumns.filter(col => !(col in firstRow));
         
@@ -84,19 +84,78 @@ const ExcelImport: React.FC<ExcelImportProps> = ({ onImport, onBack }) => {
     }
   };
 
+  const generateTemplate = () => {
+    const headers = [
+      'Nome',
+      'Email',
+      'Area',
+      'Skill Principal',
+      'Disponivel para Compartilhamento',
+      'Percentual de Compartilhamento',
+      'Outras Skills',
+      'Nivel'
+    ];
+
+    const exampleData = [
+      {
+        'Nome': 'João Silva',
+        'Email': 'joao.silva@exemplo.com',
+        'Area': 'Desenvolvedor Frontend',
+        'Skill Principal': 'React',
+        'Disponivel para Compartilhamento': 'Sim',
+        'Percentual de Compartilhamento': '75',
+        'Outras Skills': 'JavaScript, TypeScript, HTML, CSS',
+        'Nivel': 'Pleno'
+      }
+    ];
+
+    const ws = XLSX.utils.json_to_sheet(exampleData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Profissionais');
+
+    // Adicionar validações
+    const validations = {
+      'D2:D1000': ['JavaScript', 'TypeScript', 'Python', 'Java', 'C#', 'PHP', 'Go', 'Rust', 'Swift', 'Kotlin', 'React', 'Vue.js', 'Angular', 'Node.js', '.NET', 'Spring Boot'],
+      'E2:E1000': ['Sim', 'Não'],
+      'F2:F1000': ['100', '75', '50', '25'],
+      'H2:H1000': ['Júnior', 'Pleno', 'Sênior']
+    };
+
+    // Salvar o arquivo
+    XLSX.writeFile(wb, 'modelo_importacao_profissionais.xlsx');
+  };
+
   const processImport = () => {
     const professionals: Professional[] = previewData.map((row: any, index) => ({
       id: (Date.now() + index).toString(),
-      name: row.Nome || '',
+      nome_completo: row.Nome || '',
       email: row.Email || '',
-      phone: row.Telefone || '',
-      area: row.Area || '',
-      mainSkill: row['Skill Principal'] || '',
-      otherSkills: row['Outras Skills'] ? 
-        row['Outras Skills'].split(',').map((skill: string) => ({
-          name: skill.trim(),
-          level: (row.Nivel || 'Júnior') as 'Júnior' | 'Pleno' | 'Sênior'
-        })) : []
+      regime: null,
+      local_alocacao: null,
+      proficiencia_cargo: null,
+      java: null,
+      javascript: null,
+      python: null,
+      typescript: null,
+      php: null,
+      dotnet: null,
+      react: null,
+      angular: null,
+      ionic: null,
+      flutter: null,
+      mysql: null,
+      postgres: null,
+      oracle_db: null,
+      sql_server: null,
+      mongodb: null,
+      aws: null,
+      azure: null,
+      gcp: null,
+      outras_tecnologias: row['Outras Skills'] || null,
+      created_at: new Date().toISOString(),
+      hora_ultima_modificacao: new Date().toISOString(),
+      disponivel_compartilhamento: row['Disponivel para Compartilhamento']?.toLowerCase() === 'sim',
+      percentual_compartilhamento: row['Percentual de Compartilhamento'] as '100' | '75' | '50' | '25' | null
     }));
 
     onImport(professionals);
@@ -107,6 +166,7 @@ const ExcelImport: React.FC<ExcelImportProps> = ({ onImport, onBack }) => {
     }, 2000);
   };
 
+/*
   if (showSuccess) {
     return (
       <motion.div
@@ -131,7 +191,9 @@ const ExcelImport: React.FC<ExcelImportProps> = ({ onImport, onBack }) => {
       </motion.div>
     );
   }
+*/
 
+/*
   if (showPreview) {
     return (
       <motion.div
@@ -171,6 +233,8 @@ const ExcelImport: React.FC<ExcelImportProps> = ({ onImport, onBack }) => {
                   <th className="text-left p-3 text-slate-300">Email</th>
                   <th className="text-left p-3 text-slate-300">Área</th>
                   <th className="text-left p-3 text-slate-300">Skill Principal</th>
+                  <th className="text-left p-3 text-slate-300">Compartilhamento</th>
+                  <th className="text-left p-3 text-slate-300">Percentual</th>
                 </tr>
               </thead>
               <tbody>
@@ -180,6 +244,8 @@ const ExcelImport: React.FC<ExcelImportProps> = ({ onImport, onBack }) => {
                     <td className="p-3 text-slate-300">{row.Email}</td>
                     <td className="p-3 text-slate-300">{row.Area}</td>
                     <td className="p-3 text-slate-300">{row['Skill Principal']}</td>
+                    <td className="p-3 text-slate-300">{row['Disponivel para Compartilhamento']}</td>
+                    <td className="p-3 text-slate-300">{row['Percentual de Compartilhamento']}%</td>
                   </tr>
                 ))}
               </tbody>
@@ -194,6 +260,7 @@ const ExcelImport: React.FC<ExcelImportProps> = ({ onImport, onBack }) => {
       </motion.div>
     );
   }
+*/
 
   return (
     <motion.div
@@ -202,14 +269,25 @@ const ExcelImport: React.FC<ExcelImportProps> = ({ onImport, onBack }) => {
       className="max-w-2xl mx-auto"
     >
       <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20">
-        <div className="flex items-center mb-8">
-          <button
-            onClick={onBack}
-            className="p-2 hover:bg-white/10 rounded-full transition-colors mr-4"
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center">
+            <button
+              onClick={onBack}
+              className="p-2 hover:bg-white/10 rounded-full transition-colors mr-4"
+            >
+              <ArrowLeft className="h-6 w-6 text-white" />
+            </button>
+            <h2 className="text-3xl font-bold text-white">Importar do Excel</h2>
+          </div>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={generateTemplate}
+            className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 text-sm"
           >
-            <ArrowLeft className="h-6 w-6 text-white" />
-          </button>
-          <h2 className="text-3xl font-bold text-white">Importar do Excel</h2>
+            <Download className="h-4 w-4" />
+            Baixar Modelo
+          </motion.button>
         </div>
 
         {error && (
@@ -241,50 +319,56 @@ const ExcelImport: React.FC<ExcelImportProps> = ({ onImport, onBack }) => {
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
           />
           
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="flex flex-col items-center space-y-4"
-          >
+          <div className="flex flex-col items-center space-y-4">
             <div className="p-4 bg-blue-500/20 rounded-full">
               <FileSpreadsheet className="h-12 w-12 text-blue-400" />
             </div>
-            <div>
+            <div className="text-center">
               <h3 className="text-xl font-semibold text-white mb-2">
-                Arraste seu arquivo Excel aqui
+                Arraste e solte seu arquivo Excel
               </h3>
-              <p className="text-slate-300 mb-4">
-                ou clique para selecionar um arquivo .xlsx
+              <p className="text-slate-400 mb-4">
+                ou clique para selecionar
               </p>
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                className="inline-flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition-colors"
-              >
-                <Upload className="h-5 w-5" />
-                Selecionar Arquivo
-              </motion.div>
+              <div className="flex flex-col items-center gap-4">
+                <button
+                  onClick={generateTemplate}
+                  className="text-sm text-blue-400 hover:text-blue-300 underline transition-colors"
+                >
+                  Baixar modelo de planilha
+                </button>
+                <div className="inline-flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition-colors cursor-pointer">
+                  <Upload className="h-5 w-5" />
+                  Selecionar Arquivo
+                </div>
+              </div>
             </div>
-          </motion.div>
-        </div>
+          </div>
 
-        <div className="mt-8 bg-white/5 rounded-lg p-6">
-          <h4 className="text-lg font-semibold text-white mb-4">Formato do Excel:</h4>
-          <div className="text-sm text-slate-300 space-y-2">
-            <p><strong>Colunas obrigatórias:</strong></p>
-            <ul className="list-disc list-inside ml-4 space-y-1">
-              <li>Nome</li>
-              <li>Email</li>
-              <li>Telefone</li>
-              <li>Area</li>
-              <li>Skill Principal</li>
-            </ul>
-            <p className="mt-4"><strong>Colunas opcionais:</strong></p>
-            <ul className="list-disc list-inside ml-4 space-y-1">
-              <li>Outras Skills (separadas por vírgula)</li>
-              <li>Nivel (Júnior, Pleno, Sênior)</li>
-            </ul>
+          </div>
+          <div className="mt-8 bg-white/5 rounded-lg p-6">
+            <h4 className="text-lg font-semibold text-white mb-4">Formato do Excel:</h4>
+            <div className="text-sm text-slate-300 space-y-2">
+              <p><strong>Colunas obrigatórias:</strong></p>
+              <ul className="list-disc list-inside ml-4 space-y-1">
+                <li>Nome</li>
+                <li>Email</li>
+                <li>Area</li>
+                <li>Skill Principal</li>
+                <li>Disponivel para Compartilhamento (Sim/Não)</li>
+                <li>Percentual de Compartilhamento (100/75/50/25)</li>
+              </ul>
+              <p className="mt-4"><strong>Colunas opcionais:</strong></p>
+              <ul className="list-disc list-inside ml-4 space-y-1">
+                <li>Outras Skills (separadas por vírgula)</li>
+                <li>Nivel (Júnior, Pleno, Sênior)</li>
+              </ul>
+              <p className="mt-4 text-blue-300">
+                Dica: Clique em "Baixar modelo de planilha" para obter um arquivo Excel pré-formatado com todas as colunas e validações.
+              </p>
+            </div>
           </div>
         </div>
-      </div>
     </motion.div>
   );
 };
