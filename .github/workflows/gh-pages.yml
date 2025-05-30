@@ -5,23 +5,9 @@ on:
     branches:
       - main
   workflow_dispatch:
-    inputs:
-      reason:
-        description: 'Reason for manual trigger'
-        required: false
-        default: 'Manual trigger'
-
-# Allow one concurrent deployment
-concurrency:
-  group: 'pages'
-  cancel-in-progress: false
 
 jobs:
   build-and-deploy:
-    environment:
-      name: github-pages
-      url: ${{ github.server_url }}/${{ github.repository }}/pages
-    
     runs-on: ubuntu-latest
     
     permissions:
@@ -38,28 +24,18 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
 
       - name: Install dependencies
         run: |
-          npm ci --prefer-offline
-          npm cache clean --force
-
-      - name: Update browserslist and dependencies
-        run: |
+          npm ci
           npm run update:browserslist
-          npm list caniuse-lite
 
       - name: Build application
         run: |
           npm run build
-          echo "Build completed at $(date)"
 
       - name: Verify build output
         run: |
-          echo "Build directory contents:"
-          ls -la dist/
-          echo "\nChecking if index.html exists..."
           if [ ! -f dist/index.html ]; then
             echo "❌ Error: index.html not found in dist/"
             ls -la dist/ || true
@@ -75,17 +51,13 @@ jobs:
         with:
           path: './dist'
 
-    # Outputs
-    outputs:
-      page_url: ${{ github.server_url }}/${{ github.repository }}/pages
-
   deploy:
     environment:
       name: github-pages
-      url: ${{ needs.build-and-deploy.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url }}
     
-    runs-on: ubuntu-latest
     needs: build-and-deploy
+    runs-on: ubuntu-latest
     
     permissions:
       pages: write
@@ -95,16 +67,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
-
-      - name: Show deployment status
-        if: success()
-        run: |
-          echo "🚀 Deployment successful!"
-          echo "🌐 Your site is now live at: ${{ steps.deployment.outputs.page_url }}"
-
-      - name: Show deployment failure
-        if: failure()
-        run: |
-          echo "❌ Deployment failed!"
-          echo "Check the logs above for more details."
-          exit 1
