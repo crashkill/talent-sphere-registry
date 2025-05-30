@@ -4,43 +4,63 @@ on:
   push:
     branches:
       - main
+    workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
           cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci --prefer-offline
 
-      - name: Update browserslist-db
+      - name: Update browserslist and dependencies
         run: |
-          npm install update-browserslist-db@latest
-          npx update-browserslist-db
+          npm run update:browserslist
+          npm list caniuse-lite
 
-      - name: Build
+      - name: Build application
         run: npm run build
 
-      - name: Check build output
+      - name: Verify build output
         run: |
-          ls -la dist
-          echo "Checking if index.html exists..."
-          test -f dist/index.html
+          echo "Build directory contents:"
+          ls -la dist/
+          echo "\nChecking if index.html exists..."
+          if [ ! -f dist/index.html ]; then
+            echo "❌ Error: index.html not found in dist/"
+            exit 1
+          fi
+          echo "✅ Build verified successfully"
 
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          force_orphan: true
-          keep_files: true
-          clean: true
-          commit_message: 'chore: deploy to gh-pages'
-          publish_branch: gh-pages
+          path: './dist'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
+
+      - name: Show deployment status
+        run: |
+          echo "Deployment status: ${{ steps.deployment.outcome }}"
+          echo "Deployment URL: ${{ steps.deployment.outputs.page_url }}"
