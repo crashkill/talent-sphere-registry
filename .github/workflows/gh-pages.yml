@@ -35,7 +35,8 @@ jobs:
       - name: Install dependencies
         run: |
           npm ci
-          npm run update:browserslist
+          # Executa o update:browserslist, mas não falha se houver erros
+          npm run update:browserslist || echo "Warning: browserslist update failed, continuing..."
 
       - name: Build application
         run: |

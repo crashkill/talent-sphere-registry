@@ -11,7 +11,7 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "update:browserslist": "npx update-browserslist-db@latest && npm install caniuse-lite@latest --save-dev --no-package-lock"
+    "update:browserslist": "npx update-browserslist-db@latest"
   },
   "browserslist": {
     "production": [
