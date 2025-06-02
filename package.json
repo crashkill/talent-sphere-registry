@@ -4,7 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "description": "Gestão Profissional HITSS - Sistema de gestão de talentos tecnológicos",
-  "keywords": ["gestao", "profissional", "talentos", "tecnologia", "hitss"],
+  "keywords": [
+    "gestao",
+    "profissional",
+    "talentos",
+    "tecnologia",
+    "hitss"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",

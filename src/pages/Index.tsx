@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Dashboard from '../components/Dashboard';
@@ -7,6 +6,7 @@ import ExcelImport from '../components/ExcelImport';
 import WebGLBackground from '../components/WebGLBackground';
 import { Professional } from '../types/Professional';
 import { createClient, SupabaseClient } from '@supabase/supabase-js'; // Importar Supabase
+import { AIChat } from '../components/AIChat';
 
 // Configurações do Supabase
 const SUPABASE_URL = 'https://pwksgdjjkryqryqrvyja.supabase.co';
@@ -160,6 +160,8 @@ const Index = () => {
           </motion.div>
         </main>
       </div>
+      {/* Chat lateral de IA */}
+      <AIChat professionals={professionals} />
     </div>
   );
 };

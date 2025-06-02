@@ -3,8 +3,8 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import * as fs from 'fs';
 
 // Configurações
-const EXCEL_FILE_PATH = '/Users/fabriciocardosodelima/Desktop/gestao-profissionais/Cadastro Colaboradores - FSW São Paulo(1-85).xlsx';
-const EXCEL_SHEET_NAME = 'Respostas';
+const EXCEL_FILE_PATH = './Cadastro Colaboradores - FSW São Paulo(1-97) - Detalhada.xlsx';
+const EXCEL_SHEET_NAME = 'Planilha1';
 
 const SUPABASE_URL = 'https://pwksgdjjkryqryqrvyja.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3a3NnZGpqa3J5cXJ5cXJ2eWphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1NjAwNDgsImV4cCI6MjA2NDEzNjA0OH0.CbqU-Gx-QglerhxQzDjK6KFAi4CRLUl90LeKvDEKtbc';
@@ -13,37 +13,61 @@ const supabase: SupabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const TABLE_NAME = 'colaboradores';
 
 // Colunas do Excel a serem ignoradas
-const COLUMNS_TO_IGNORE = ["ID", "Hora de início", "Hora de conclusão", "Nome"];
+const COLUMNS_TO_IGNORE = ["ID", "Hora de início", "Hora de conclusão", "Timestamp", "Nome"];
 
 // Mapeamento de colunas do Excel para a tabela Supabase
 // Chave: Nome da coluna no Excel (exatamente como no arquivo)
 // Valor: Nome da coluna na tabela Supabase
 const COLUMN_MAPPING: { [key: string]: string } = {
   "Email": "email",
-  "Hora da última modificação": "hora_ultima_modificacao",
   "Nome Completo": "nome_completo",
   "Regime": "regime",
   "Local de Alocação": "local_alocacao",
-  "Proficiência": "proficiencia_cargo", // Esta é a coluna de cargo/proficiência geral
+  "Cargo": "cargo",
   "Java": "java",
-  "JavaScript": "javascript",
   "Python": "python",
+  "C#": "csharp",
+  "Ruby": "ruby",
+  "Kotlin": "kotlin",
+  "Scala": "scala",
+  "COBOL": "cobol",
+  "Wordpress": "wordpress",
+  "JavaScript": "javascript",
   "TypeScript": "typescript",
   "PHP": "php",
   ".NET": "dotnet",
   "React": "react",
   "Angular": "angular",
-  "Ionic": "ionic",
+  "Vue": "vue",
+  "Svelte": "svelte",
+  "Next": "next",
+  "Nuxt": "nuxt",
   "Flutter": "flutter",
+  "Ionic": "ionic",
+  "SQL Server": "sql_server",
   "MySQL": "mysql",
   "Postgres": "postgres",
   "Oracle": "oracle_db",
-  "SQL Server": "sql_server",
   "Mongo DB": "mongodb",
+  "Redis": "redis",
   "AWS": "aws",
   "Azure": "azure",
   "GCP": "gcp",
-  "Conhece alguma outra tecnologia que não está na lista acima? Pode informar aqui:": "outras_tecnologias"
+  "Docker": "docker",
+  "Kubernetes": "kubernetes",
+  "Terraform": "terraform",
+  "Ansible": "ansible",
+  "Jenkins": "jenkins",
+  "Git": "git",
+  "Jira": "jira",
+  "Confluence": "confluence",
+  "Tableau": "tableau",
+  "Pentaho": "pentaho",
+  "Mule": "mule",
+  "Tibco": "tibco",
+  "Hbase": "hbase",
+  "Siebel": "siebel",
+  "Outras Tecnologias": "outras_tecnologias"
 };
 
 // Função para converter data serial do Excel para objeto Date do JavaScript
