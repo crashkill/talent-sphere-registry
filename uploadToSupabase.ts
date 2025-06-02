@@ -1,13 +1,13 @@
-import * as XLSX from 'xlsx';
+import XLSX from 'xlsx';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import * as fs from 'fs';
 
 // Configurações
-const EXCEL_FILE_PATH = '/Users/fabriciocardosodelima/Desktop/gestao-profissionais/Cadastro Colaboradores - FSW São Paulo(1-85).xlsx';
-const EXCEL_SHEET_NAME = 'Respostas';
+const EXCEL_FILE_PATH = '/Users/fabriciocardosodelima/Desktop/talent-sphere-registry/Cadastro Colaboradores - FSW São Paulo(1-97) - Detalhada.xlsx';
+const EXCEL_SHEET_NAME = 'Resposta';
 
 const SUPABASE_URL = 'https://pwksgdjjkryqryqrvyja.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3a3NnZGpqa3J5cXJ5cXJ2eWphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1NjAwNDgsImV4cCI6MjA2NDEzNjA0OH0.CbqU-Gx-QglerhxQzDjK6KFAi4CRLUl90LeKvDEKtbc';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3a3NnZGpqa3J5cXJ5cXJ2eWphIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0ODU2MDA0OCwiZXhwIjoyMDY0MTM2MDQ4fQ.FaNXM6jMHLAa-e6A8PQlZY9wxv9XrweZa4vMCYNhdk4';
 const supabase: SupabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const TABLE_NAME = 'colaboradores';
@@ -44,6 +44,7 @@ const COLUMN_MAPPING: { [key: string]: string } = {
   "Azure": "azure",
   "GCP": "gcp",
   "Conhece alguma outra tecnologia que não está na lista acima? Pode informar aqui:": "outras_tecnologias"
+  // Removidas todas as tecnologias que não existem como colunas na tabela Supabase
 };
 
 // Função para converter data serial do Excel para objeto Date do JavaScript
@@ -144,14 +145,14 @@ async function uploadData() {
     const BATCH_SIZE = 100;
     for (let i = 0; i < dataToInsert.length; i += BATCH_SIZE) {
       const batch = dataToInsert.slice(i, i + BATCH_SIZE);
-      console.log(`Inserindo lote ${i/BATCH_SIZE + 1} com ${batch.length} linhas...`);
-      const { data, error } = await supabase.from(TABLE_NAME).insert(batch);
+      console.log(`Inserindo/atualizando lote ${i/BATCH_SIZE + 1} com ${batch.length} linhas...`);
+      const { data, error } = await supabase.from(TABLE_NAME).upsert(batch, { onConflict: 'email' });
 
       if (error) {
-        console.error(`Erro ao inserir lote de dados (linhas ${i + 1} a ${i + batch.length}):`, error);
+        console.error(`Erro ao inserir/atualizar lote de dados (linhas ${i + 1} a ${i + batch.length}):`, error);
         // Você pode decidir parar aqui ou continuar com os próximos lotes
       } else {
-        console.log(`Lote de ${batch.length} linhas inserido com sucesso.`);
+        console.log(`Lote de ${batch.length} linhas inserido/atualizado com sucesso.`);
       }
     }
 
