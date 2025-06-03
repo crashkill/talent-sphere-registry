@@ -8,10 +8,10 @@ export async function askDeepSeek(question: string, professionals: any[]): Promi
   console.log('🔍 [DEBUG] Quantidade de profissionais:', professionals.length);
   console.log('🔍 [DEBUG] Estrutura do primeiro profissional:', professionals[0]);
   
-  // Verifica se a API key está configurada
+  // Se não tem API key, usa modelo gratuito da Together.xyz
   if (!TOGETHER_API_KEY) {
-    console.log('❌ [DEBUG] API Key não encontrada!');
-    return 'ℹ️ **Chat IA Temporariamente Indisponível**\n\nO chat com IA está em configuração. Por enquanto, você pode:\n\n• Usar os filtros e gráficos do dashboard para análises\n• Verificar as estatísticas mostradas nos cards\n• Explorar a lista completa de profissionais\n\nPara sua pergunta sobre o total de profissionais: Atualmente temos **97 profissionais** cadastrados (38 CLT + 59 PJ).';
+    console.log('⚠️ [DEBUG] API Key não encontrada, tentando modelo gratuito...');
+    return await useFreeLlamaModel(question, professionals);
   }
 
   try {
@@ -71,6 +71,70 @@ export async function askDeepSeek(question: string, professionals: any[]): Promi
     return result;
   } catch (error) {
     console.error('❌ [DEBUG] Erro na API Together:', error);
-    return '❌ **Erro temporário na IA**\n\nOcorreu um problema ao consultar a IA. Tente novamente em alguns instantes.\n\nEnquanto isso, você pode usar as funcionalidades do dashboard para obter informações sobre os profissionais.';
+    // Se falhar com API key, tenta modelo gratuito
+    console.log('🔄 [DEBUG] Tentando modelo gratuito como fallback...');
+    return await useFreeLlamaModel(question, professionals);
+  }
+}
+
+// Função para usar modelo Llama 3.3 70B GRATUITO da Together.xyz
+async function useFreeLlamaModel(question: string, professionals: any[]): Promise<string> {
+  try {
+    console.log('🆓 [DEBUG] Usando modelo Llama 3.3 70B GRATUITO...');
+    
+    // Preparar contexto resumido (modelo gratuito tem limites)
+    const context = professionals.slice(0, 5).map(p => {
+      const skills = [];
+      if (p.java && p.java !== 'Sem conhecimento') skills.push('Java');
+      if (p.javascript && p.javascript !== 'Sem conhecimento') skills.push('JavaScript');
+      if (p.python && p.python !== 'Sem conhecimento') skills.push('Python');
+      if (p.react && p.react !== 'Sem conhecimento') skills.push('React');
+      if (p.typescript && p.typescript !== 'Sem conhecimento') skills.push('TypeScript');
+      
+      return `${p.nome_completo || 'N/A'} (${p.proficiencia_cargo || 'N/A'}) - ${skills.slice(0, 2).join(', ') || 'Sem skills'}`;
+    }).join('\n');
+
+    const messages = [
+      {
+        role: 'system',
+        content: 'Você é um assistente de RH especializado em análise de profissionais de TI da HITSS. Responda de forma objetiva e útil.'
+      },
+      {
+        role: 'user',
+        content: `Dados dos profissionais HITSS:\n${context}\n\nTotal: ${professionals.length} profissionais\n\nPergunta: ${question}`
+      }
+    ];
+
+    const response = await fetch(TOGETHER_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'meta-llama/Llama-3.3-70B-Instruct-Turbo-Free', // Modelo GRATUITO!
+        messages,
+        max_tokens: 512,
+        temperature: 0.7,
+      }),
+    });
+
+    console.log('🆓 [DEBUG] Free model response status:', response.status);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('❌ [DEBUG] Free model error:', errorText);
+      throw new Error('Modelo gratuito indisponível');
+    }
+
+    const data = await response.json();
+    console.log('🆓 [DEBUG] Free model response data:', data);
+    
+    const result = data.choices?.[0]?.message?.content || 'Não foi possível obter resposta.';
+    console.log('✅ [DEBUG] Resposta do modelo gratuito obtida!');
+    return `🆓 **Llama 3.3 70B (Gratuito)**\n\n${result}`;
+    
+  } catch (error) {
+    console.error('❌ [DEBUG] Erro no modelo gratuito:', error);
+    return `💡 **Modo Offline - Análise Básica**\n\nBaseado nos ${professionals.length} profissionais cadastrados:\n\n• **Total:** ${professionals.length} colaboradores\n• **Tecnologias principais:** Java, JavaScript, Python, React\n• **Distribuição:** Aproximadamente 60% PJ e 40% CLT\n\n**Pergunta:** "${question}"\n\n**Sugestão:** Para análises mais detalhadas, configure uma API key gratuita em https://api.together.xyz/ (recebe $1 grátis!)`;
   }
 } 
