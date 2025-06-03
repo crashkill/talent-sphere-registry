@@ -13,7 +13,7 @@ Sistema moderno e elegante para gestão de talentos tecnológicos da HITSS, dese
 - **Dashboard Interativo** - Visualizações e estatísticas em tempo real
 - **Importação Excel** - Upload de planilhas de colaboradores
 - **Formulário Manual** - Cadastro individual de profissionais  
-- **Chat IA** - Consultas inteligentes sobre os dados (opcional)
+- **Chat IA Inteligente** - Sistema com múltiplas opções de IA gratuitas
 - **Filtros Avançados** - Por tecnologias, senioridade, tipo de contrato
 - **Gráficos Dinâmicos** - Análises visuais dos dados
 
@@ -21,6 +21,7 @@ Sistema moderno e elegante para gestão de talentos tecnológicos da HITSS, dese
 
 - **Frontend:** React 18 + TypeScript, Vite, Tailwind CSS + Radix UI
 - **Backend:** Supabase (PostgreSQL + API)
+- **IA:** Sistema inteligente com Llama 3.3 70B, Groq, análise offline
 - **Extras:** Framer Motion, Recharts, Three.js
 - **Deploy:** GitHub Pages com CI/CD
 
@@ -35,21 +36,43 @@ VITE_SUPABASE_URL=https://pwksgdjjkryqryqrvyja.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3a3NnZGpqa3J5cXJ5cXJ2eWphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTcwMjA2NzcsImV4cCI6MjAzMjU5NjY3N30.CiVnO1vEUh4xLl2NzRlDvwJlj4xGfhpfJFAIYyZJkO8
 ```
 
-### 2. Chat IA com Together.xyz (Opcional)
+### 2. Chat IA - Sistema Inteligente (Múltiplas Opções)
 
-Para ativar o chat IA, configure também:
+**✅ JÁ FUNCIONA:** O sistema usa automaticamente o **Llama 3.3 70B GRATUITO** da Together.xyz
+
+**⚡ Para velocidade INSANA (Opcional):** Configure o Groq:
 
 ```bash
-VITE_TOGETHER_API_KEY=sua_api_key_aqui
+VITE_GROQ_API_KEY=sua_groq_key_aqui
 ```
 
-**Como obter a API Key:**
-1. Crie conta grátis: https://api.together.xyz/
+**Como obter a Groq API Key:**
+1. Crie conta grátis: https://console.groq.com/
+2. Acesse "API Keys" no dashboard
+3. Clique em "Create API Key"
+4. Copie a key (começa com `gsk_...`)
+5. Adicione nos GitHub Secrets
+
+**🔥 Para recursos premium (Opcional):** Configure o Together.xyz:
+
+```bash
+VITE_TOGETHER_API_KEY=sua_together_key_aqui
+```
+
+**Como obter a Together.xyz API Key:**
+1. Crie conta grátis: https://api.together.xyz/ (recebe $1 grátis)
 2. Acesse: https://api.together.xyz/settings/api-keys
 3. Copie sua API key
 4. Adicione nos GitHub Secrets
 
-> **Nota:** O chat IA funciona com modelos open-source como DeepSeek, Llama, Qwen. Sem a API key, o sistema continua funcionando normalmente, apenas o chat ficará indisponível.
+### 🧠 Como o Sistema IA Inteligente Funciona:
+
+1. **🆓 Llama 3.3 70B Gratuito** (Together.xyz) - Sem API key necessária
+2. **⚡ Groq Ultra Rápido** - Se API key configurada (200-500ms!)
+3. **🔑 Together.xyz Premium** - Se API key configurada 
+4. **💡 Análise Offline** - Fallback inteligente sempre disponível
+
+> **Nota:** O sistema testa automaticamente todas as opções e usa a melhor disponível. Sempre funciona, mesmo sem nenhuma API key!
 
 ### 3. Como configurar GitHub Secrets
 
@@ -70,7 +93,9 @@ O sistema tem **CI/CD automático**:
 - ✅ **Dashboard funcionando** com filtros e gráficos
 - ✅ **Import/Export Excel** operacional
 - ✅ **Formulários** para cadastro manual
-- ⚠️ **Chat IA** - Aguardando API key Together.xyz
+- ✅ **Chat IA funcionando** - Llama 3.3 70B gratuito ativo!
+- ⚡ **Groq disponível** - Configure para velocidade insana
+- 🔑 **APIs premium** - Opcionais para recursos avançados
 
 ## 🔧 Desenvolvimento Local
 
@@ -98,7 +123,10 @@ src/
 ├── pages/         # Páginas principais
 ├── types/         # Definições TypeScript
 ├── hooks/         # Hooks customizados
-└── lib/           # Utilitários e configurações
+├── lib/           # Utilitários e configurações
+│   ├── smartai.ts    # Sistema IA inteligente
+│   ├── togetherai.ts # Integração Together.xyz
+│   └── groq.ts       # Integração Groq
 ```
 
 ## 🏢 Sobre o Projeto
