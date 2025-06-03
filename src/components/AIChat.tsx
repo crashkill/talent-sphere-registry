@@ -51,7 +51,14 @@ export const AIChat: React.FC<AIChatProps> = ({ professionals }) => {
         chatRef.current?.scrollTo({ top: chatRef.current.scrollHeight, behavior: 'smooth' });
       }, 100);
     } catch (e) {
-      alert('Erro ao consultar IA');
+      // Em caso de erro, mostra uma mensagem de erro como resposta da IA
+      const errorMsg = { 
+        question: input.trim(), 
+        answer: '❌ **Erro inesperado**\n\nOcorreu um erro inesperado. Tente novamente em alguns instantes.' 
+      };
+      const newMessages = [...messages, errorMsg];
+      setMessages(newMessages);
+      setInput('');
     } finally {
       setLoading(false);
     }
