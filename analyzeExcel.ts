@@ -1,45 +1,62 @@
-import * as XLSX from 'xlsx';
-import * as fs from 'fs'; // Usaremos para verificar se o arquivo existe
+console.log("Script analyzeExcel.ts started...");
 
-const filePath = 'Cadastro Colaboradores - FSW São Paulo(1-97) - Detalhada.xlsx';
+import XLSX from 'xlsx';
+import * as fs from 'fs';
+
+const filePath = '/Users/fabriciocardosodelima/Desktop/talent-sphere-registry/Cadastro Colaboradores - FSW São Paulo(1-97) - Detalhada.xlsx';
 
 function analyzeExcelFile(path: string) {
+  console.log(`Tentando analisar o arquivo em: ${path}`);
   try {
-    // Verifica se o arquivo existe antes de tentar lê-lo
     if (!fs.existsSync(path)) {
       console.error(`ERRO: Arquivo não encontrado em: ${path}`);
       return;
     }
 
-    // Lê o arquivo Excel
     const workbook = XLSX.readFile(path);
-
-    // Pega o nome de todas as planilhas no arquivo
     const sheetNames = workbook.SheetNames;
-    console.log('Planilhas encontradas no arquivo:', sheetNames);
 
-    // Itera sobre cada planilha
+    console.log('\n--------------------------------------------------------------------------');
+    console.log('Planilhas encontradas no arquivo:', sheetNames);
+    console.log('--------------------------------------------------------------------------');
+
+    if (sheetNames.length === 0) {
+      console.log("Nenhuma planilha encontrada no arquivo.");
+      return;
+    }
+
     sheetNames.forEach(sheetName => {
-      console.log(`\n--- Conteúdo da Planilha: ${sheetName} ---`);
+      console.log(`\n--- Analisando Planilha: "${sheetName}" ---`);
       const worksheet = workbook.Sheets[sheetName];
-      
-      // Converte a planilha para JSON
-      // header: 1 para obter um array de arrays, útil para ver a estrutura crua.
-      // Para objetos JSON (onde a primeira linha é o cabeçalho), remova { header: 1 }
-      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }); 
-      
-      if (jsonData.length > 0) {
-        console.log('Cabeçalhos:', jsonData[0]); // Mostra os cabeçalhos
-        console.log('Dados (primeiras 5 linhas, se houver):');
-        for (let i = 1; i < Math.min(jsonData.length, 6); i++) {
-          console.log(jsonData[i]);
-        }
-        if (jsonData.length > 6) {
-          console.log(`... e mais ${jsonData.length - 6} linhas.`);
-        }
-      } else {
-        console.log('Planilha vazia.');
+      if (!worksheet) {
+        console.log(`Não foi possível carregar a planilha "${sheetName}".`);
+        return;
       }
+      
+      // Tenta pegar a primeira linha como cabeçalhos
+      // A opção { header: 1 } retorna um array de arrays.
+      // range: 0 especifica para processar apenas a primeira linha (índice 0).
+      const jsonDataFirstRow: any[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1, range: 0 });
+      let headers: any[] = [];
+
+      if (jsonDataFirstRow.length > 0 && Array.isArray(jsonDataFirstRow[0])) {
+        headers = jsonDataFirstRow[0].filter(header => header !== null && header !== undefined && String(header).trim() !== ''); // Filtra cabeçalhos vazios
+      }
+      
+      if (headers.length > 0) {
+        console.log('Cabeçalhos (Colunas da primeira linha):', headers);
+      } else {
+        // Se a primeira linha não forneceu cabeçalhos, tenta ler algumas linhas para inspeção
+        console.log('Não foram encontrados cabeçalhos na primeira linha ou a primeira linha está vazia.');
+        const sampleData: any[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1, range: 5 }); // Pega até 5 linhas
+        if (sampleData.length > 0) {
+          console.log('Amostra de dados das primeiras linhas (para ajudar a identificar cabeçalhos):');
+          sampleData.forEach((row, index) => {
+            console.log(`Linha ${index + 1}:`, row);
+          });
+        }
+      }
+      console.log('--------------------------------------------------------------------------');
     });
 
   } catch (error) {
@@ -47,5 +64,4 @@ function analyzeExcelFile(path: string) {
   }
 }
 
-// Executa a função de análise
 analyzeExcelFile(filePath);

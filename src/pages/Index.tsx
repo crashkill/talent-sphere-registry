@@ -9,8 +9,9 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js'; // Importa
 import { AIChat } from '../components/AIChat';
 
 // Configurações do Supabase
-const SUPABASE_URL = 'https://pwksgdjjkryqryqrvyja.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3a3NnZGpqa3J5cXJ5cXJ2eWphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1NjAwNDgsImV4cCI6MjA2NDEzNjA0OH0.CbqU-Gx-QglerhxQzDjK6KFAi4CRLUl90LeKvDEKtbc';
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
 const supabase: SupabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const Index = () => {
